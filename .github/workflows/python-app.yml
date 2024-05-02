@@ -1,39 +1,24 @@
-name: Deploy Flask App
+name: Deploy to Server
 
 on:
   push:
     branches:
-      - main  # Change this to match your main branch name
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'  # Replace 'x' with the Python version you're using
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        
-
-    - name: Build Flask app
-      run: |
-        # Add any build commands here (e.g., compiling static assets)
-
-    - name: Deploy to server
-      uses: easingthemes/ssh-deploy@v2
-      with:
-        server_ip: ${{ secrets.SERVER_IP }}
-        server_username: ${{ secrets.SERVER_USERNAME }}
-        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        local_path: '.'  # Change this to the directory containing your Flask app
-        remote_path: '/path/to/destination/on/server'
-        args: '-rltgoDzvO --delete'  # Optional rsync arguments for syncing files
-
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@v2
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SOURCE: './venv'  # Adjust this path based on the structure of your project within the venv
+          TARGET: '/path/to/destination/on/server'
+          ARGS: '-rltgoDzvO --delete'  # Optional rsync arguments for syncing files
